@@ -31,6 +31,7 @@
   <div class = "countainer">
     <%= yield %>
     <%= render 'layouts/footer' %>
+    <%= debug(params) if Rails.env.development? %>
   </div>
 </body>
 </html>
