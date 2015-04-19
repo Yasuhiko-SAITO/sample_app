@@ -27,7 +27,9 @@ describe "Authentication" do
     describe "with invalid information" do
       before { click_button "Sign in" }
       it { should have_title('Sign in') }
-      it { should have_selector('div.alert-error', text: 'Invalid') }
+#      it { should have_selector('div.alert-error', text: 'Invalid') }	#chap 8-5-2でコメントアウト
+       it { should have_error_message('Invalid') }
+
 
       describe "after visiting another page" do
         before { click_link "Home" }
@@ -37,11 +39,12 @@ describe "Authentication" do
 
     describe "with valid information" do
       let(:user) { FactoryGirl.create(:user) }
-      before do
-        fill_in "Email", with: user.email.upcase
-        fill_in "Password", with: user.password
-        click_button "Sign in"
-      end  # before do
+#      before do	#chap 8-5-2でコメントアウト	
+#        fill_in "Email", with: user.email.upcase
+#        fill_in "Password", with: user.password
+#        click_button "Sign in"
+#      end  # before do
+      before { valid_signin(user) }
 
       describe "followed by signout" do
         before { click_link "Sign out" }
