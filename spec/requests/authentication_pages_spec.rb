@@ -99,5 +99,17 @@ describe "Authentication" do
         specify { expect(response).to redirect_to(root_path) }
       end  # describe "submitting a PATCH request ~
     end  # describe "as wrong user" do
-  end
+
+    describe "as non-admin user" do
+      let(:user) { FactoryGirl.create(:user) }
+      let(:non_admin) { FactoryGirl.create(:user) }
+
+      before { sign_in non_admin, no_capybara: true }
+
+      describe "submitting a DELETE request to the Users#destroy action" do
+        before { delete user_path(user) }
+        specify { expect(response).to redirect_to(root_path) }
+      end  # describe "submitting ~ do
+    end  # describe "as non-admin user" do
+  end  # describe "authorization" do
 end  # describe "Authentication" do
