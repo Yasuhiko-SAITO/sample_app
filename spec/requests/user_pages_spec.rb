@@ -3,6 +3,43 @@ require 'spec_helper'
 describe "User pages" do
   subject { page }
 
+  describe "index" do
+    #chap 9-3-3でコメントアウト
+#    before do
+#      sign_in FactoryGirl.create(:user)
+#      FactoryGirl.create(:user, name: "Bob", email: "bob@example.com")
+#      FactoryGirl.create(:user, name: "Ben", email: "ben@example.com")
+#      visit users_path
+#    end  # before do
+    let(:user) { FactoryGirl.create(:user) }
+    before(:each) do
+      sign_in user
+      visit users_path
+    end
+
+    it { should have_title('All users') }
+    it { should have_content('All users') }
+
+    describe "pagination" do
+      before(:all) { 30.times {FactoryGirl.create(:user)} }
+      after(:all) { User.delete_all }
+
+      it { should have_selector('div.pagination') }
+
+      it "should list each user" do
+        User.paginate(page: 1).each do |user|
+          expect(page).to have_selector('li', text: user.name)
+        end  # User.paginate(page: 1).each do |user|
+      end  # it "should list each user" do
+    end  # describe "pagination" do←ちょっと怪しい
+
+    it "should list each user" do
+      User.all.each do |user|
+        expect(page).to have_selector('li', text: user.name)
+      end  # User.all.each do |user|
+    end  # it "should list each user" do
+  end  # describe "index" do
+
   describe "profile page" do
     let(:user) { FactoryGirl.create(:user) }
     before { visit user_path(user) }
