@@ -12,6 +12,10 @@ describe "Authentication" do
 
   describe "signin" do
     before { visit signin_path }
+    # practice 9-6-2で追加
+    it { should_not have_link('Profile') }
+    it { should_not have_link('Settings') }
+
 
     describe "with invalid information" do
       before { click_button "Sign in" }
@@ -51,9 +55,11 @@ describe "Authentication" do
       describe "when attempting to visit a protested page" do
         before do
           visit edit_user_path(user)
-          fill_in "Email", with: user.email
-          fill_in "Password", with: user.password
-          click_button "Sign in"
+          #chap9-6-4でコメントアウト
+#          fill_in "Email", with: user.email
+#          fill_in "Password", with: user.password
+#          click_button "Sign in"
+           sign_in(user)
         end  # before do
 
         describe "after signing in" do
@@ -61,6 +67,13 @@ describe "Authentication" do
           it "should render the desired protected page" do
             expect(page).to have_title('Edit user')
           end  # it "should render ~ do
+
+          describe "when signing in again" do
+            before do
+              delete signout_path
+              sign_in(user)
+            end  # before do
+          end  # describe "when signing in again" do
         end  # describe "after signing in" do
       end  # describe "when attempting ~ do
 
@@ -82,6 +95,22 @@ describe "Authentication" do
         end  # describe "visiting the user index" do
       end  # describe "in the Users controller" do
     end  # describe "for non-signed-in users" do
+
+    describe "as signed-in user" do
+      let(:user) { FactoryGirl.create(:user) }
+      before { sign_in user, no_capybara:true }
+
+      describe "cannot access #new action" do
+        before { get new_user_path }
+        specify { response.should redirect_to(root_path) }
+      end
+
+      describe "cannot acces #create action" do
+        before { post users_path(user) }
+        specify { response.should redirect_to(root_path) }
+      end
+    end  # describe "as signed-in user" do
+
 
     describe "as wrong user" do
       let(:user) { FactoryGirl.create(:user) }
@@ -111,5 +140,16 @@ describe "Authentication" do
         specify { expect(response).to redirect_to(root_path) }
       end  # describe "submitting ~ do
     end  # describe "as non-admin user" do
+
+    describe "as admin user" do
+      let(:admin) { FactoryGirl.create(:admin) }
+      before { sign_in admin, no_capybara: true }
+
+      describe "should not be able to delete themselves via #destroy action" do
+        specify do
+          expect { delete user_path(admin) }.not_to change(User, :count).by(-1)
+        end  # specify do
+      end  # describe "should not ~ #destroy action" do
+    end  # describe "as admin user" do
   end  # describe "authorization" do
 end  # describe "Authentication" do
