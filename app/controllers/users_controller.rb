@@ -1,5 +1,6 @@
 class UsersController < ApplicationController
-  before_action :signed_in_user, only: [:index, :edit, :update, :destroy]
+  #chap10-3-1でコメントアウトの指示。でもエラーが出たのでイン。	
+  before_action :signed_in_user, only: [:index, :edit, :update, :destroy]  # この行
   before_action :correct_user, only: [:edit, :update]
   before_action :admin_user, only: :destroy
   before_action :restrict_registration, only: [:new, :create]
