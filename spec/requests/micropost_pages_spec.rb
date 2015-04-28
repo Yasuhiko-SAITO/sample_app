@@ -37,4 +37,15 @@ describe "Micropost pages" do
       end  # it "should create a micropost" do
     end  # describe "with valid information" do
   end  # describe "micropost creation" do
+
+  describe "micropost destruction" do
+    before { FactoryGirl.create(:micropost, user: user) }
+
+    describe "as correct user" do
+      before { visit root_path }
+      it "should delete a micropost" do
+        expect { click_link "delete" }.to change(Micropost, :count).by(-1)
+      end  # it "should delete a micrpost" do
+    end  # describe "as correct user" do
+  end  # describe "micropost destruction" do
 end  # describe "Micropost pages" do
